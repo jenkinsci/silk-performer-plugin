@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.borland.jenkins</groupId>
     <artifactId>silk-performer-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <name>Silk Performer Plugin</name>
@@ -33,6 +33,7 @@
   <connection>scm:git:ssh://github.com/jenkinsci/silk-performer-plugin.git</connection>
   <developerConnection>scm:git:ssh://git@github.com/jenkinsci/silk-performer-plugin.git</developerConnection>
   <url>https://github.com/jenkinsci/silk-performer-plugin</url>
+   <tag>HEAD</tag>
 </scm>
     <repositories>
         <repository>

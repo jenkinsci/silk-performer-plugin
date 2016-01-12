@@ -1,10 +1,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry >
-        If this is the first time the plugin gets loaded, please add the project location and save the configuration. <b>Don't just apply it! </b>
+        First, specify the location of the project file and save the configuration. Do not apply the configuration beforehand!
         <br />
-        After that you can go ahead and fill in the succes criterias. They only appear if the project file location is set. <br /> 
-        It is recommended to not change the project location afterwards. <br />
+        Then, you can specify success criteria. These appear, once the location of the project file is set. <br /> 
+        It is recommended to not change the location of the project file afterwards. <br />
     </f:entry>
     <f:entry title="Project File Location" field="projectLoc">
         <f:textbox />
@@ -16,8 +16,8 @@
             <j:if test="${errMsg != ''}">
                 <font color="red"><b>Error! </b>${errMsg}</font>
             </j:if>            
-            <f:entry title="Success Criterias:">
-                <f:repeatableProperty field="successCriteria" add="Add Success Criteria" noAddButton="false" header="Success Criteria: "/>
+            <f:entry title="Success Criteria:">
+                <f:repeatableProperty field="successCriteria" add="Add Success Criterion" noAddButton="false" header="Success Criterion: "/>
             </f:entry>
         </j:if>
     </j:if>

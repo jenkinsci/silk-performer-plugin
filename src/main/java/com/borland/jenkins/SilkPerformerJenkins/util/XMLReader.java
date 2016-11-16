@@ -33,7 +33,8 @@ public class XMLReader
     }
     XMLInputFactory factory = XMLInputFactory.newInstance();
     XMLStreamReader reader = factory.createXMLStreamReader(xmldata);
-    while (reader.hasNext())
+    boolean agentListDone = false;
+    while (reader.hasNext() && !agentListDone)
     {
       int event = reader.next();
       switch (event)
@@ -75,6 +76,11 @@ public class XMLReader
           tagContent = reader.getText().trim();
           break;
         case XMLStreamConstants.END_ELEMENT:
+          if (reader.getLocalName().equals("AgentList"))
+          {
+            agentListDone = true;
+            break;
+          }
           if (reader.getLocalName().equals("Agent"))
           {
             agentsList.add(currAgent);

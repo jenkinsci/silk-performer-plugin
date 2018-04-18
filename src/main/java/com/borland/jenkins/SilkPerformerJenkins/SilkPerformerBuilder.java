@@ -1,10 +1,22 @@
 package com.borland.jenkins.SilkPerformerJenkins;
 
+import java.io.File;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+
+import com.borland.jenkins.SilkPerformerJenkins.data.SPAgent;
 import com.borland.jenkins.SilkPerformerJenkins.util.Config;
 import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerListBuilder;
 import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerTestManager;
 import com.borland.jenkins.SilkPerformerJenkins.util.UserTypeItem;
 import com.borland.jenkins.SilkPerformerJenkins.util.XMLReader;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -14,16 +26,8 @@ import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-import java.io.File;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 public class SilkPerformerBuilder extends Builder
 {
@@ -86,20 +90,14 @@ public class SilkPerformerBuilder extends Builder
       listener.getLogger().println("Detailed report location : " + resultsPath.getPath() + File.separator + "detailedReport.xml!");
       listener.getLogger().println("Processing Results!");
       spxml = new XMLReader();
-      List<XMLReader.Agent> agentsList = spxml.readResults(resultsPath.getPath() + File.separator + "detailedReport.xml");
-      if (agentsList == null)
+      List<SPAgent> spAgentList = spxml.readResults(resultsPath.getPath() + File.separator + "detailedReport.xml");
+      if (spAgentList == null || spAgentList.size() == 0)
       {
         listener.getLogger().println("Could not read detailedReport.xml!");
         return false;
       }
-      return spxml.processResults(agentsList, successCriteria, listener); // returning
-                                                                          // false
-                                                                          // will
-                                                                          // make
-                                                                          // the
-                                                                          // build
-                                                                          // a
-                                                                          // failure
+      // returning false will make the build a failure
+      return spxml.processResults(spAgentList, successCriteria, listener);
     }
     catch (Exception e)
     {

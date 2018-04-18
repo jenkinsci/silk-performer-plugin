@@ -1,14 +1,17 @@
 package com.borland.jenkins.SilkPerformerJenkins;
 
+import java.util.List;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.borland.jenkins.SilkPerformerJenkins.data.SPMeasure;
 import com.borland.jenkins.SilkPerformerJenkins.util.UserTypeItem;
-import com.borland.jenkins.SilkPerformerJenkins.util.XMLReader.Measure;
+
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.util.ListBoxModel;
-import java.util.List;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria>
 {
@@ -27,30 +30,18 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria>
 
   public enum ListOfMeasures
   {
-    ERRORS(eSummary, "Summary Report", MEASURE_AGENT_GEN_CountError, "Errors", "Summary General"), // eSummary,
-                                                                                                   // MEASURE_AGENT_GEN_CountError
-    TRANSACATION_BUSY_OK(eTrans, "Transaction", MEASURE_TRANS_TransExecOk, "Transaction Busy Time", "#Overall Response Time# or <name>"), // eTrans,
-                                                                                                                                          // MEASURE_TRANS_TransExecOk,
-                                                                                                                                          // "Trans.(busy)
-                                                                                                                                          // ok[s]"
-    PAGE_TIME(ePageTimer, "Page and Action Timer", MEASURE_PAGE_PageTime, "Page Time", "#Overall Response Time# or <name>"), // ePageTimer,
-                                                                                                                             // MEASURE_PAGE_PageTime,
-                                                                                                                             // "Page
-                                                                                                                             // time[s]"
-    ACTION_TIME(ePageTimer, "Page and Action Timer", MEASURE_PAGE_ActionTime, "Action Time", "#Overall Response Time# or <name>"), // ePageTimer,
-                                                                                                                                   // MEASURE_PAGE_ActionTime,
-                                                                                                                                   // "Action
-                                                                                                                                   // time[s]"
-    ROUND_TRIP_TIME(eForm, "Web Form", MEASURE_FORM_RoundTrip, "Form Response Time", "<Form name>"), // eForm,
-                                                                                                     // MEASURE_FORM_RoundTrip
-                                                                                                     // ,
-                                                                                                     // "Round
-                                                                                                     // trip
-                                                                                                     // time[s]"
-    RESPONSE_TIME(eTimerMPClass, "Timer", MEASURE_TIMER_ResponseTime, "Custom Timer", "<Measure name>"); // eTimerMPClass,
-                                                                                                         // MEASURE_TIMER_ResponseTime,
-                                                                                                         // "Response
-                                                                                                         // time[s]"
+    // eSummary, MEASURE_AGENT_GEN_CountError
+    ERRORS(eSummary, "Summary Report", MEASURE_AGENT_GEN_CountError, "Errors", "Summary General"),
+    // eTrans, MEASURE_TRANS_TransExecOk, "Trans.(busy) ok[s]"
+    TRANSACATION_BUSY_OK(eTrans, "Transaction", MEASURE_TRANS_TransExecOk, "Transaction Busy Time", "#Overall Response Time# or <name>"),
+    // ePageTimer, MEASURE_PAGE_PageTime, "Page time[s]"
+    PAGE_TIME(ePageTimer, "Page and Action Timer", MEASURE_PAGE_PageTime, "Page Time", "#Overall Response Time# or <name>"),
+    // ePageTimer, MEASURE_PAGE_ActionTime, "Action time[s]"
+    ACTION_TIME(ePageTimer, "Page and Action Timer", MEASURE_PAGE_ActionTime, "Action Time", "#Overall Response Time# or <name>"),
+    // eForm, MEASURE_FORM_RoundTrip , "Round trip time[s]"
+    ROUND_TRIP_TIME(eForm, "Web Form", MEASURE_FORM_RoundTrip, "Form Response Time", "<Form name>"),
+    // eTimerMPClass, MEASURE_TIMER_ResponseTime, "Response time[s]"
+    RESPONSE_TIME(eTimerMPClass, "Timer", MEASURE_TIMER_ResponseTime, "Custom Timer", "<Measure name>");
 
     private final int iMeasureClass;
     private final int iMeasureType;
@@ -165,7 +156,7 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria>
     return chosenValue;
   }
 
-  public boolean isSelectedMeasure(Measure m, BuildListener listener)
+  public boolean isSelectedMeasure(SPMeasure m, BuildListener listener)
   {
     ListOfMeasures mm = getSelectedMeasure();
     if (mm != null && measureName.toUpperCase().equals(m.getName().toUpperCase()) && mm.getMeasureClass() == m.getMeasureClass() && mm.getMeasureType() == m.getMeasureType())
@@ -258,7 +249,6 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria>
       return items;
     }
 
-
     public ListBoxModel doFillOperatorTypeItems()
     {
       ListBoxModel items = new ListBoxModel();
@@ -276,6 +266,7 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria>
       items.add("Minimum Value", "Minimum Value");
       items.add("Maximum Value", "Maximum Value");
       items.add("Average Value", "Average Value");
+      items.add("Count All", "Count All");
       return items;
     }
   }

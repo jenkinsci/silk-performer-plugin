@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>silk-performer-plugin</artifactId>
-   <version>1.0.18</version>
+   <version>1.0.19-SNAPSHOT</version>
    <packaging>hpi</packaging>
    <name>Silk Performer Plugin</name>
    <url>http://wiki.jenkins-ci.org/display/JENKINS/Silk+Performer+Plugin</url>

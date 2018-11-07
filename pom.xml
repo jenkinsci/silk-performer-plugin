@@ -1,15 +1,28 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<javac.src.version>1.8</javac.src.version>
+		<javac.target.version>1.8</javac.target.version>
+		<java.level>8</java.level>
+	</properties>
 
-    <parent>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>plugin</artifactId>
-        <version>1.628</version>  
-	    <relativePath />		
-    </parent>
+
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<!-- Baseline Jenkins version you use to build and test the plugin. Users 
+			must have this version or newer to run. -->
+		<version>2.30</version>
+		<relativePath />
+	</parent>
 
     <artifactId>silk-performer-plugin</artifactId>
-   <version>1.0.19-SNAPSHOT</version>
+   <version>2.0.0-beta-1</version>
    <packaging>hpi</packaging>
    <name>Silk Performer Plugin</name>
    <url>http://wiki.jenkins-ci.org/display/JENKINS/Silk+Performer+Plugin</url>
@@ -53,6 +66,11 @@
         <artifactId>plexus-utils</artifactId>
         <version>1.5.1</version>
       </dependency>
+	 <dependency>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plot</artifactId>
+		<version>2.1.0</version>
+	</dependency>
 		        	  
     </dependencies>
 
@@ -60,7 +78,7 @@
       <connection>scm:git:https://github.com/jenkinsci/silk-performer-plugin.git</connection>
       <developerConnection>scm:git:https://github.com/jenkinsci/silk-performer-plugin.git</developerConnection>
       <url>https://github.com/jenkinsci/silk-performer-plugin</url>
-      <tag>silk-performer-plugin-1.0.18</tag>
+      <tag>silk-performer-plugin-2.0.0-beta</tag>
   </scm>
 
   <distributionManagement>

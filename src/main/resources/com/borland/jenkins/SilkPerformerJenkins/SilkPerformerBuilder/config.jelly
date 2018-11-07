@@ -1,24 +1,19 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry >
-        First, specify the location of the project file and save the configuration. Do not apply the configuration beforehand!
+        This plugin integrates Micro Focus Silk Performer with Jenkins.
         <br />
-        Then, you can specify success criteria. These appear, once the location of the project file is set. <br /> 
-        It is recommended to not change the location of the project file afterwards. <br />
     </f:entry>
-    <f:entry title="Project File Location" field="projectLoc">
+    <f:entry title="Project File Location:" field="projectLoc">
         <f:textbox />
     </f:entry>
-    <j:set var="workspaceLoc" value="${it.getWorkspace().getRemote()}"/>
-    <j:if test="${instance.projectLoc != ''}">
-        <j:if test="${instance.projectLoc != null}">
-            <j:set var="errMsg" value="${descriptor.fillListBuilder(workspaceLoc, instance.projectLoc)}"/>
-            <j:if test="${errMsg != ''}">
-                <font color="red"><b>Error! </b>${errMsg}</font>
-            </j:if>            
-            <f:entry title="Success Criteria:">
-                <f:repeatableProperty field="successCriteria" add="Add Success Criterion" noAddButton="false" header="Success Criterion: "/>
-            </f:entry>
-        </j:if>
-    </j:if>
+    <f:entry title="Workload:" field="workload">
+        <f:textbox />
+    </f:entry>
+            
+    <f:entry title="Success Criteria:">
+        If you do not define any success criterion, the project's performance levels will be evaluated. <br/>
+        <br />
+        <f:repeatableProperty field="successCriteria" add="Add Success Criterion" noAddButton="false" header="Success Criterion: "/>
+   </f:entry>
 </j:jelly>

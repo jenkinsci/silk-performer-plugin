@@ -1,83 +1,143 @@
 package com.borland.jenkins.SilkPerformerJenkins.util;
 
-import com.segue.em.Projectfile;
-import com.segue.em.SGExecutionManager;
-import com.segue.em.projectfile.TransactionInfo;
-import com.segue.em.projectfile.UserType;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-public class SilkPerformerListBuilder
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerMeasuresList.SilkPerformerMeasure;
+
+public class SilkPerformerListBuilder implements Serializable
 {
+  private static final long serialVersionUID = -773441083101579225L;
 
-  private final List<UserTypeItem> userTypeList;
-  private final List<String> transactionList;
+  private static final Map<String, List<String>> measures = new TreeMap<>();;
+  private static final Map<String, Integer> mapMeasureCategory = new HashMap<>();
+  private static final Map<String, Integer> mapMeasureType = new HashMap<>();;
 
-  public SilkPerformerListBuilder()
+  static
   {
-    this.userTypeList = new ArrayList<UserTypeItem>();
-    this.transactionList = new ArrayList<String>();
+    fillMap();
   }
 
-  public List<UserTypeItem> getUserTypeList()
+  private SilkPerformerListBuilder()
   {
-    return userTypeList;
   }
 
-  public List<String> getTransactionList()
+  public static List<String> getMeasurePointClasses()
   {
-    return transactionList;
+    return new ArrayList<>(measures.keySet());
   }
 
-  public String getInformation(String projectLoc)
+  public static List<String> getMeasureTypes(String measureCategory)
   {
-    String toRet = "";
-    UserTypeItem currUserTypeItem;
+    List<String> l = measures.get(measureCategory);
+    return (l == null) ? new ArrayList<>() : l;
+  }
+
+  public static int getMeasureCategoryId(String measureCategory)
+  {
+    Integer i = mapMeasureCategory.get(measureCategory);
+    return (i == null) ? -1 : i;
+  }
+
+  public static int getMeasureTypeId(String measureType)
+  {
+    Integer i = mapMeasureType.get(measureType);
+    return (i == null) ? -1 : i;
+  }
+
+  public static String getMeasureCategoryName(int measureCategoryId)
+  {
+    for (Entry<String, Integer> e : mapMeasureCategory.entrySet())
+    {
+      if (e.getValue() == measureCategoryId)
+      {
+        return e.getKey();
+      }
+    }
+    return "";
+  }
+
+  public static String getMeasureTypeName(int measureTypeId)
+  {
+    for (Entry<String, Integer> e : mapMeasureType.entrySet())
+    {
+      if (e.getValue() == measureTypeId)
+      {
+        return e.getKey();
+      }
+    }
+    return "";
+  }
+
+  private static void fillMap()
+  {
+    for (SilkPerformerMeasure m : SilkPerformerMeasuresList.measures)
+    {
+      List<String> l = measures.get(m.getMeasureCategoryName());
+      if (l == null)
+      {
+        l = new ArrayList<>();
+        measures.put(m.getMeasureCategoryName(), l);
+      }
+      l.add(m.getMeasureTypeName());
+
+      if (!mapMeasureCategory.containsKey(m.getMeasureCategoryName()))
+      {
+        mapMeasureCategory.put(m.getMeasureCategoryName(), m.getMeasureCategoryId());
+      }
+      mapMeasureType.put(m.getMeasureTypeName(), m.getMeasureTypeId());
+    }
+  }
+
+  // To generate the xml file use ...
+  private static void fillMap_fromFile()
+  {
+    Document doc;
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     try
     {
-      transactionList.clear();
-      userTypeList.clear();
-
-      Projectfile prjf = SGExecutionManager.openProject(projectLoc);
-      if (prjf == null) {
-        
-        return toRet;
-      } 
-      String namewl = prjf.getActiveWorkload();
-      prjf.setCurrentWorkload(namewl);
-      UserType itut = prjf.getFirstUserType();
-      while (itut != null)
-      {
-        currUserTypeItem = new UserTypeItem();
-        currUserTypeItem.setProfileName(itut.getProfileName());
-        currUserTypeItem.setScriptName(itut.getScriptName());
-        currUserTypeItem.setUsergroupName(itut.getUsergroupName());
-        userTypeList.add(currUserTypeItem);
-        itut = prjf.getNextUserType();
-      }
-      Iterator<TransactionInfo> itti = prjf.getTransactionInfo();
-      while (itti.hasNext())
-      {
-        TransactionInfo ti = itti.next();
-        String currTransactionItem = ti.getTransactionName();
-        transactionList.add(currTransactionItem);
-      }
-      prjf.close();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      doc = db.parse("Messages.xml");
     }
     catch (Exception e)
     {
-      toRet = e.getMessage() + " - " + projectLoc;
-      transactionList.clear();
-      userTypeList.clear();
-
-      transactionList.add("Error!");
-      currUserTypeItem = new UserTypeItem();
-      currUserTypeItem.setProfileName("Error!");
-      currUserTypeItem.setScriptName("");
-      currUserTypeItem.setUsergroupName("");
-      userTypeList.add(currUserTypeItem);
+      return;
     }
-    return toRet;
+
+    NodeList messagesListNodeList = doc.getElementsByTagName("Measures");
+    if (messagesListNodeList.getLength() == 0)
+    {
+      return;
+    }
+
+    Element messagesListNode = (Element) messagesListNodeList.item(0);
+    NodeList classPointNodeList = messagesListNode.getElementsByTagName("ClassPoint");
+    for (int i = 0; i < classPointNodeList.getLength(); i++)
+    {
+      Element classPointNode = (Element) classPointNodeList.item(i);
+      List<String> list = new ArrayList<>();
+      measures.put(classPointNode.getAttribute("name"), list);
+      mapMeasureCategory.put(classPointNode.getAttribute("name"), Integer.valueOf(classPointNode.getAttribute("id")));
+
+      NodeList typeNodeList = classPointNode.getElementsByTagName("Type");
+      for (int j = 0; j < typeNodeList.getLength(); j++)
+      {
+        Element typeNode = (Element) typeNodeList.item(j);
+        list.add(typeNode.getAttribute("name"));
+        mapMeasureType.put(typeNode.getAttribute("name"), Integer.valueOf(typeNode.getAttribute("id")));
+      }
+    }
   }
 }

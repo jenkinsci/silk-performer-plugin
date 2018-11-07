@@ -41,4 +41,17 @@ public class SPAgent
 
     return sb.toString();
   }
+
+  public String toPrint()
+  {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Agent: ").append(name).append("\n");
+    for (SPUserType ut : userTypes)
+    {
+      sb.append(ut.toPrint());
+    }
+
+    return sb.toString();
+  }
 }

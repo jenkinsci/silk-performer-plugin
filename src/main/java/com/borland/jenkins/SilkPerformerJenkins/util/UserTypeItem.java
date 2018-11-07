@@ -1,7 +1,10 @@
 package com.borland.jenkins.SilkPerformerJenkins.util;
 
-public class UserTypeItem
+import java.io.Serializable;
+
+public class UserTypeItem implements Serializable
 {
+  private static final long serialVersionUID = 8120427857520791669L;
 
   private String mProfileName;
   private String mScriptName;

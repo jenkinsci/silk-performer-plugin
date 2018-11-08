@@ -156,9 +156,9 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     {
       listener.getLogger().println("Creating overview report.");
 
-      final String COMMANDFILE = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + "<PerfExpCommandFile NoGui=\"True\" LogFile=\"%s\">\n" + " <OverviewReport\n"
-          + "      File=\"%s\"\n" + "      Export=\"%s\"\n" + "  />\n" + "   <Command>SINGLEINSTANCE</Command>\n" + "   <Command>ACTION:OVERVIEWREPORT</Command>  \n"
-          + "   <Command>EXIT</Command>\n" + "</PerfExpCommandFile>";
+      final String COMMANDFILE = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>%n" + "<PerfExpCommandFile NoGui=\"True\" LogFile=\"%s\">%n" + " <OverviewReport%n"
+          + "      File=\"%s\"%n" + "      Export=\"%s\"%n" + "  />%n" + "   <Command>SINGLEINSTANCE</Command>%n" + "   <Command>ACTION:OVERVIEWREPORT</Command>  %n"
+          + "   <Command>EXIT</Command>%n" + "</PerfExpCommandFile>";
       final String COMMANDLINE = "\"%sperfExp.exe\" /COMMANDFILE:\"%scommandGenOVR.txt\"";
 
       try
@@ -211,7 +211,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
 
   private void generateProjectInfo(List<SPAgent> spAgentList)
   {
-    String separator = "\n#######################################################\n";
+    String separator = "%n#######################################################%n";
 
     listener.getLogger().println(separator);
     XMLProjectReader.printWorkloads(projectFilePath, listener.getLogger());

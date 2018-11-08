@@ -36,5 +36,11 @@ public class SGExecutionManager implements ISGExecutionManager
   {
     return "";
   }
+  
+  public static void abortAllLoadtests()
+  {
+  }
+  
+  
 
 }

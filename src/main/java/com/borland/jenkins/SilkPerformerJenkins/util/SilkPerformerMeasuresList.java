@@ -15,7 +15,7 @@ public class SilkPerformerMeasuresList
   {
   }
 
-  public static final List<SilkPerformerMeasure> measures;
+  static final List<SilkPerformerMeasure> measures;
   static
   {
     measures = new ArrayList<>();

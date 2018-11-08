@@ -175,14 +175,14 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
 
           // Create OverviewReport file's parent directory, if not exists
           Path ovrDir = ovrFilePath.getParent();
-          if (!ovrDir.toFile().exists())
+          if (ovrDir != null && !ovrDir.toFile().exists())
           {
             Files.createDirectory(ovrDir);
           }
 
           String commandFile = String.format(COMMANDFILE, perfExpLogFilePath.toFile().getAbsolutePath(), tsdFilePath.toFile().getAbsolutePath(),
               ovrFilePath.toFile().getAbsolutePath());
-          Files.write(Paths.get(resultPath, "commandGenOVR.txt"), commandFile.getBytes());
+          Files.write(Paths.get(resultPath, "commandGenOVR.txt"), commandFile.getBytes("UTF-8"));
 
           String commandline = String.format(COMMANDLINE, performerInstallDir + File.separator, resultPath + File.separator);
           Process p = Runtime.getRuntime().exec(commandline);

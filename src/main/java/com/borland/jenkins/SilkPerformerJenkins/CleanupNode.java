@@ -19,7 +19,7 @@ public class CleanupNode extends MasterToSlaveCallable<Boolean, IOException> imp
   public Boolean call() throws IOException
   {
     SGExecutionManager.abortAllLoadtests();
-    return null;
+    return true;
   }
 
 }

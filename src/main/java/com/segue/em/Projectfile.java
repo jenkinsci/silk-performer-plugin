@@ -2,35 +2,53 @@ package com.segue.em;
 
 import java.util.Iterator;
 
+import com.segue.em.projectfile.ProfileBooleanProperty;
 import com.segue.em.projectfile.TransactionInfo;
 import com.segue.em.projectfile.UserType;
 
-public class Projectfile {
-	public String getActiveWorkload() {
-		return null;
-	}
+public class Projectfile extends SgemCapableObject implements IProjectfile
+{
+  public synchronized void close()
+  {
+  }
 
-	public void setCurrentWorkload(String attr) {
-	}
+  public void save()
+  {
+  }
+  
+  public String getActiveWorkload()
+  {
+    return "";
+  }
 
-	public UserType getFirstUserType() {
-		return null;
-	}
+  public void setCurrentWorkload(String csWLName)
+  {
+  }
 
-	public UserType getNextUserType() {
-		return null;
-	}
+  public UserType getFirstUserType()
+  {
+    return null;
+  }
 
-	public Iterator getTransactionInfo() {
-		return null;
-	}
+  public UserType getNextUserType()
+  {
+    return null;
+  }
 
-	public void setResultsDir(String attr) {
-	}
+  public synchronized Iterator<TransactionInfo> getTransactionInfo()
+  {
+    return null;
+  }
 
-	public void save() {
-	}
-
-	public void close() {
-	}
+  public void setProfileBooleanProperty(ProfileBooleanProperty prop)
+  {
+  }
+  
+  public void setResultsDir(String newDir)
+  {
+  }
+  
+  public void setActiveWorkload(String csWLName)
+  {
+  }
 }

@@ -1,19 +1,42 @@
 package com.segue.em;
 
-public class Ltc {
-	public void setDeployBuildOption(int attr) {
-	}
+import java.io.Serializable;
 
-	public void deployProject(String attr) {
-	}
+import com.segue.em.ltc.Listener;
 
-	public int start(int attr) {
-		return -1;
-	}
+public class Ltc extends SgemCapableObject implements Serializable
+{
+  public void addEventListener(Listener listener)
+  {
+  }
 
-	public void undeploy() {
-	}
+  public void setDeployBuildOption(int delployOption)
+  {
+  }
 
-	public void destroy() {
-	}
+  public void deployProject(String prjFileName)
+  {
+  }
+
+  public int start(int iTimeout)
+  {
+    return 0;
+  }
+
+  public void undeploy()
+  {
+  }
+
+  public boolean generateOverviewReport(String sOVRFileName)
+  {
+    return false;
+  }
+
+  public synchronized void destroy()
+  {
+  }
+
+  public void setVuOutputOptions(int uOptions)
+  {
+  }
 }

@@ -1,15 +1,21 @@
 package com.segue.em.projectfile;
 
-public class UserType {
-	public String getProfileName() {
-		return null;
-	}
+import java.io.Serializable;
 
-	public String getScriptName() {
-		return null;
-	}
+public class UserType implements Serializable
+{
+  public String getUsergroupName()
+  {
+    return "";
+  }
 
-	public String getUsergroupName() {
-		return null;
-	}
+  public String getScriptName()
+  {
+    return "";
+  }
+
+  public String getProfileName()
+  {
+    return "";
+  }
 }

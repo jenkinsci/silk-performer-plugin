@@ -123,7 +123,7 @@ public class SPUserType
     return sb.toString();
   }
 
-  private class MeasurePair
+  static private class MeasurePair
   {
     private Set<String> hsMeasureType = new HashSet<>();
     private Set<String> hsMeasureName = new HashSet<>();

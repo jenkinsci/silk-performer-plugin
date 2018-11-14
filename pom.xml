@@ -20,7 +20,7 @@
 	</parent>
 
     <artifactId>silk-performer-plugin</artifactId>
-   <version>2.0.2-beta-SNAPSHOT</version>
+   <version>2.0.2-beta</version>
    <packaging>hpi</packaging>
    <name>Silk Performer Plugin</name>
    <url>http://wiki.jenkins-ci.org/display/JENKINS/Silk+Performer+Plugin</url>
@@ -49,6 +49,13 @@
    
    <dependencies>
       <dependency>
+		<groupId>com.segue</groupId>
+		<artifactId>segue</artifactId>
+		<version>1.0</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/lib/stubs.jar</systemPath>
+	   </dependency>
+      <dependency>
          <groupId>net.java.dev.jna</groupId>
          <artifactId>jna</artifactId>
          <version>4.2.0</version>
@@ -76,7 +83,7 @@
       <connection>scm:git:https://github.com/jenkinsci/silk-performer-plugin.git</connection>
       <developerConnection>scm:git:https://github.com/jenkinsci/silk-performer-plugin.git</developerConnection>
       <url>https://github.com/jenkinsci/silk-performer-plugin</url>
-      <tag>silk-performer-plugin-2.0.0-beta</tag>
+      <tag>silk-performer-plugin-2.0.2-beta</tag>
   </scm>
 
   <distributionManagement>

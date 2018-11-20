@@ -1,8 +1,6 @@
 package com.borland.jenkins.SilkPerformerJenkins;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -25,10 +23,9 @@ import com.borland.jenkins.SilkPerformerJenkins.data.SPAgent;
 import com.borland.jenkins.SilkPerformerJenkins.data.SPUserType;
 import com.borland.jenkins.SilkPerformerJenkins.util.OverviewReport;
 import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerTestManager;
+import com.borland.jenkins.SilkPerformerJenkins.util.SystemUtils;
 import com.borland.jenkins.SilkPerformerJenkins.util.XMLProjectReader;
 import com.borland.jenkins.SilkPerformerJenkins.util.XMLReader;
-import com.segue.core.utils.Utils;
-import com.segue.core.utils.UtilsException;
 
 import hudson.model.BuildListener;
 import jenkins.security.MasterToSlaveCallable;
@@ -50,6 +47,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
 
   public ExecuteOnNode(String projectFilePath, BuildListener listener, String performerInstallDir, String workload, List<SuccessCriteria> successCriteria, String projectName)
   {
+
     this.listener = listener;
     this.performerInstallDir = performerInstallDir;
     this.projectFilePath = projectFilePath;
@@ -60,20 +58,14 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     this.successCriteria = successCriteria;
     usePerformanceLevels = (successCriteria == null);
 
-    try
-    {
-      Utils.extendLibraryPath(performerInstallDir);
-    }
-    catch (NoSuchFieldException | IllegalAccessException | UtilsException e)
-    {
-      listener.getLogger().println("Cannot add SP_HOME to java's library path.");
-      e.printStackTrace(listener.getLogger());
-    }
+    SystemUtils.initSystem(performerInstallDir, listener);
+    
   }
-  
+
   @Override
   public Boolean call() throws IOException
   {
+    SystemUtils.initSystem(performerInstallDir, listener);
     SilkPerformerTestManager sptm;
     XMLReader spxml;
     listener.getLogger().println("Initializing the load tests.");
@@ -137,7 +129,9 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
         listener.getLogger().println("");
         successCriteria = new ArrayList<SuccessCriteria>();
         successCriteria.add(new SuccessCriteria("All", "Summary General", "Errors", "All", "Count All", "=", "0"));
-      } else {
+      }
+      else
+      {
         listener.getLogger().println("Processing results using " + (usePerformanceLevels ? "project's performance levels." : "Jenkins' success criteria."));
       }
 

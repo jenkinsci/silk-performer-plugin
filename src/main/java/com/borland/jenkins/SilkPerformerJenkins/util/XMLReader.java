@@ -126,7 +126,7 @@ public class XMLReader implements Serializable
     boolean bSuccessCriteriaFailed = false;
     for (SPMeasure m : ut.getMeasureList())
     {
-      if ((sc.getMeasureName().equalsIgnoreCase("all") || sc.getMeasureName().equalsIgnoreCase(m.getName())) && sc.isSelectedMeasure(m))
+      if (sc.isSelectedMeasure(m))
       {
         bMeasureFound = true;
         if (sc.getValueType().equals("Minimum Value"))

@@ -8,6 +8,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.borland.jenkins.SilkPerformerJenkins.data.SPMeasure;
 import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerListBuilder;
+import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerMeasuresList;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -36,7 +37,7 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
     this.measureCategory = measureCategory;
     this.measureCategoryInt = SilkPerformerListBuilder.getMeasureCategoryId(measureCategory);
     this.measureType = measureType;
-    this.measureTypeInt = SilkPerformerListBuilder.getMeasureTypeId(measureType);
+    this.measureTypeInt = SilkPerformerListBuilder.getMeasureTypeId(measureType + SilkPerformerListBuilder.SEPARATOR + measureCategory);
     this.measureName = measureName;
     this.valueType = valueType;
     this.operatorType = operatorType;
@@ -103,7 +104,7 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
 
   public boolean isSelectedMeasure(SPMeasure m)
   {
-    return checkMeasureCategory(m.getMeasureClass()) && getMeasureTypeInt() == m.getMeasureType();
+    return checkMeasureName(m.getName()) && checkMeasureCategory(m.getMeasureClass()) && getMeasureTypeInt() == m.getMeasureType();
   }
 
   private boolean checkMeasureCategory(int iMeasureCategory)
@@ -113,6 +114,12 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
      * Internet(13), Summary Web(14) ...
      */
     return (iMeasureCategory == getMeasureCategoryInt() || ((iMeasureCategory == 10) && (11 <= getMeasureCategoryInt() && getMeasureCategoryInt() <= 17)));
+  }
+
+  private boolean checkMeasureName(String sMeasureName)
+  {
+    return (getMeasureName().equalsIgnoreCase("all") || sMeasureName.equalsIgnoreCase(getMeasureName())
+        || (sMeasureName.equalsIgnoreCase(getMeasureCategory()) && (11 <= getMeasureCategoryInt() && getMeasureCategoryInt() <= 17)));
   }
 
   public String toStringLog()
@@ -164,7 +171,8 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
 
     public ListBoxModel doFillMeasureTypeItems(@QueryParameter String measureCategory)
     {
-      if (measureCategory.isEmpty()) {
+      if (measureCategory.isEmpty())
+      {
         measureCategory = "Controller";
       }
       ListBoxModel items = new ListBoxModel();
@@ -195,17 +203,19 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
       items.add("Count All", "Count All");
       return items;
     }
-    
-       
-      public FormValidation doCheckChosenValue(@QueryParameter String chosenValue) {
-        try {
-          Double.parseDouble(chosenValue);
-          }
-        catch (Exception e) {
-          return FormValidation.error("Value not of type Double");
-        }
-        return FormValidation.ok();
+
+    public FormValidation doCheckChosenValue(@QueryParameter String chosenValue)
+    {
+      try
+      {
+        Double.parseDouble(chosenValue);
       }
+      catch (Exception e)
+      {
+        return FormValidation.error("Value not of type Double");
+      }
+      return FormValidation.ok();
+    }
   }
 
 }

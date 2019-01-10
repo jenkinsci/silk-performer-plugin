@@ -1,7 +1,5 @@
 package com.borland.jenkins.SilkPerformerJenkins.util;
 
-import java.net.URISyntaxException;
-
 import hudson.model.Action;
 
 public class OverviewReport implements Action
@@ -18,7 +16,7 @@ public class OverviewReport implements Action
   @Override
   public String getIconFileName()
   {
-    return "plugin/SilkPerformerJenkins/images/24x24/OverviewReport_24x24.png";
+    return "/plugin/SilkPerformerJenkins/images/24x24/OverviewReport_24x24.png";
   }
 
   @Override

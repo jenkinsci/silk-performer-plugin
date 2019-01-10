@@ -126,8 +126,8 @@ public class SuccessCriteria extends AbstractDescribableImpl<SuccessCriteria> im
   {
     StringBuilder sb = new StringBuilder("Success Criterion : ");
     sb.append(getMeasureName());
-    sb.append(", ").append(getMeasureCategory()).append("(").append(getMeasureCategoryInt()).append(")");
-    sb.append(", ").append(getMeasureType()).append("(").append(getMeasureTypeInt()).append(")");
+    sb.append(", ").append(getMeasureCategory());
+    sb.append(", ").append(getMeasureType());
     return sb.toString();
   }
 

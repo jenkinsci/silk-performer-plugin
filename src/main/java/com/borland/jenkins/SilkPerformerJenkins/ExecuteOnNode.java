@@ -40,7 +40,6 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
   BuildListener listener;
   String projectFilePath;
   String projectPath;
-  String resultPath;
   private List<SuccessCriteria> successCriteria;
   String workload;
   boolean usePerformanceLevels;
@@ -51,9 +50,6 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     this.listener = listener;
     this.performerInstallDir = performerInstallDir;
     this.projectFilePath = projectFilePath;
-    File f = new File(projectFilePath);
-    projectPath = f.getAbsoluteFile().getParent();
-    resultPath = projectPath + File.separator + ExecuteOnNode.RESULTS_NAME;
     this.workload = workload;
     this.successCriteria = successCriteria;
     usePerformanceLevels = (successCriteria == null);
@@ -69,6 +65,9 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     SilkPerformerTestManager sptm;
     XMLReader spxml;
     listener.getLogger().println("Initializing the load tests.");
+    File f = new File(projectFilePath);
+    projectPath = f.getAbsoluteFile().getParent();
+    String resultPath = projectPath + File.separator + ExecuteOnNode.RESULTS_NAME;
     try
     {
       listener.getLogger().println("");

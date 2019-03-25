@@ -34,7 +34,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
 {
   private static final long serialVersionUID = -7451856820879041390L;
 
-  public static final String RESULTS_NAME = "result";
+  public static final String RESULTS_NAME = "result" + File.separator;
 
   private String performerInstallDir;
   BuildListener listener;
@@ -55,7 +55,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     usePerformanceLevels = (successCriteria == null);
 
     SystemUtils.initSystem(performerInstallDir, listener);
-    
+
   }
 
   @Override
@@ -73,7 +73,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
       listener.getLogger().println("");
       listener.getLogger().println("USING THE FOLLOWING SETTINGS");
       listener.getLogger().println("Project file path: " + projectFilePath);
-      listener.getLogger().println("Results path: " + projectPath + "\\result");
+      listener.getLogger().println("Results path: " + resultPath);
       listener.getLogger().println("Silk Performer installation directory: " + performerInstallDir);
 
       sptm = new SilkPerformerTestManager(projectFilePath, resultPath, performerInstallDir, workload);
@@ -97,7 +97,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
       List<SPAgent> spAgentList;
       if (usePerformanceLevels)
       {
-        spAgentList = spxml.readResults(resultPath + "\\detailedReport.xml", true, listener.getLogger());
+        spAgentList = spxml.readResults(resultPath + "detailedReport.xml", true, listener.getLogger());
         successCriteria = createSuccessCriteraFromPerformanceLevels(projectPath, workload, listener.getLogger());
         if (successCriteria == null || successCriteria.isEmpty())
         {
@@ -108,7 +108,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
       }
       else
       {
-        spAgentList = spxml.readResults(resultPath + "\\detailedReport.xml", false, listener.getLogger());
+        spAgentList = spxml.readResults(resultPath + "detailedReport.xml", false, listener.getLogger());
       }
       if (spAgentList == null || spAgentList.isEmpty())
       {
@@ -177,13 +177,17 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
               ovrFilePath.toFile().getAbsolutePath());
           Files.write(Paths.get(resultPath, "commandGenOVR.txt"), commandFile.getBytes("UTF-8"));
 
-          String commandline = String.format(COMMANDLINE, performerInstallDir + File.separator, resultPath + File.separator);
+          String commandline = String.format(COMMANDLINE, performerInstallDir + File.separator, resultPath);
           Process p = Runtime.getRuntime().exec(commandline);
           while (p.isAlive())
           {
             Thread.sleep(1000);
           }
           listener.getLogger().println("Overview report generated.");
+        }
+        else 
+        {
+          listener.getLogger().println("Could not generate Overview report.");
         }
       }
       catch (IOException e)

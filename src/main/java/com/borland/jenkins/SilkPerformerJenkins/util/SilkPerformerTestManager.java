@@ -57,7 +57,6 @@ public class SilkPerformerTestManager
     ltc.setVuOutputOptions(SGExecutionManager.OPT_DISPLAY_ALL_MSG);
     ltc.start(-1);
     ltc.undeploy();
-    ltc.generateOverviewReport(OverviewReport.OVR_NAME);
     ltc.destroy();
     SGExecutionManager.destroyController(ltc);
   }

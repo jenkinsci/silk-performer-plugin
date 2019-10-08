@@ -12,42 +12,90 @@ import hudson.model.BuildListener;
 
 public class SystemUtils
 {
+  private static boolean isSystemInitialized = false;
+
+  private SystemUtils()
+  {
+  }
+
   public static void initSystem(String performerInstallDir, BuildListener listener)
   {
-    loadSgemJar(performerInstallDir, listener);
-    addToJavaLib(performerInstallDir, listener);
+    if (!isSystemInitialized)
+    {
+      addToJavaLib(performerInstallDir, listener);
+      loadNativeLibraries(performerInstallDir, listener);
+      loadSgemJar(performerInstallDir, listener);
+
+      isSystemInitialized = true;
+    }
   }
-  
-  public static void loadSgemJar(String performerInstallDir, BuildListener listener) {
+
+  private static void loadSgemJar(String performerInstallDir, BuildListener listener)
+  {
     try
     {
-      File ff = new File(performerInstallDir + "\\ClassFiles\\sgem.jar");
-      URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-      Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
-      method.setAccessible(true);
-      method.invoke(sysloader, new Object[] { ff.toURI().toURL() });
+      ClassLoader clsLoader = ClassLoader.getSystemClassLoader();
+      if (URLClassLoader.class.isInstance(clsLoader))
+      {
+        File ff = new File(performerInstallDir + "\\ClassFiles\\sgem.jar");
+        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+        method.invoke(ClassLoader.getSystemClassLoader(), ff.toURI().toURL());
 
-      listener.getLogger().println("Object = " + ff.exists());
+        listener.getLogger().println(ff.getAbsolutePath() + " is loaded!");
+      }
+      else
+      {
+        listener.getLogger().println("No URLClassLoader! " + clsLoader.getClass());
+      }
     }
     catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | MalformedURLException e)
     {
-      listener.getLogger().println("Cannot load sgem.jar.");
+      listener.error("Cannot load sgem.jar.");
       e.printStackTrace(listener.getLogger());
     }
   }
 
-  public static void addToJavaLib(String performerInstallDir, BuildListener listener)
+  private static void addToJavaLib(String performerInstallDir, BuildListener listener)
   {
     try
     {
-      System.setProperty("java.library.path", performerInstallDir);
-      Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-      fieldSysPath.setAccessible(true);
-      fieldSysPath.set(null, null);
+      String s = System.getProperty("java.library.path");
+      if (!s.contains(performerInstallDir))
+      {
+        listener.getLogger().println(performerInstallDir + " is added to java.library.path");
+        s = performerInstallDir + ";" + s;
+        System.setProperty("java.library.path", s);
+        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+        fieldSysPath.setAccessible(true);
+        fieldSysPath.set(null, null);
+      }
     }
     catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
     {
-      listener.getLogger().println("Cannot extend java library path.");
+      listener.error("Cannot extend java library path.");
+      e.printStackTrace(listener.getLogger());
+    }
+  }
+
+  private static void loadNativeLibraries(String performerInstallDir, BuildListener listener)
+  {
+    try
+    {
+      System.load(performerInstallDir + "\\locStringsCommon.dll");
+      System.load(performerInstallDir + "\\locStringsKernelCommon.dll");
+      System.load(performerInstallDir + "\\locStringsKernelFeatures.dll");
+      System.load(performerInstallDir + "\\perfVersion.dll");
+      System.load(performerInstallDir + "\\perfBexScanner.dll");
+      System.load(performerInstallDir + "\\perfXmlReports.dll");
+      System.load(performerInstallDir + "\\perfTsd.dll");
+      System.load(performerInstallDir + "\\perfBdlScanner.dll");
+      System.load(performerInstallDir + "\\sgExecManager.dll");
+      // We need to load these libraries to be able to load sgemBridge.dll
+    }
+    catch (Exception e)
+    {
+      listener.error("Cannot load SP specific native libraries.");
       e.printStackTrace(listener.getLogger());
     }
   }

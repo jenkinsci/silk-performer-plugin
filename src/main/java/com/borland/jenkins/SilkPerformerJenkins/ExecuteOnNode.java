@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -126,7 +127,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
         listener.getLogger().println("WARNING: No success criteria defined or Performance Level file not found.");
         listener.getLogger().println("Falling back to default success criteria. Checking for execution errors.");
         listener.getLogger().println("");
-        successCriteria = new ArrayList<SuccessCriteria>();
+        successCriteria = new ArrayList<>();
         successCriteria.add(new SuccessCriteria("All", "Summary General", "Errors", "All", "Count All", "=", "0"));
       }
       else
@@ -175,7 +176,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
 
           String commandFile = String.format(COMMANDFILE, perfExpLogFilePath.toFile().getAbsolutePath(), tsdFilePath.toFile().getAbsolutePath(),
               ovrFilePath.toFile().getAbsolutePath());
-          Files.write(Paths.get(resultPath, "commandGenOVR.txt"), commandFile.getBytes("UTF-8"));
+          Files.write(Paths.get(resultPath, "commandGenOVR.txt"), commandFile.getBytes(StandardCharsets.UTF_8));
 
           String commandline = String.format(COMMANDLINE, performerInstallDir + File.separator, resultPath);
           Process p = Runtime.getRuntime().exec(commandline);
@@ -185,14 +186,14 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
           }
           listener.getLogger().println("Overview report generated.");
         }
-        else 
+        else
         {
           listener.getLogger().println("Could not generate Overview report.");
         }
       }
       catch (IOException e)
       {
-        listener.getLogger().println(e.toString());
+        listener.error(e.toString());
         e.printStackTrace(listener.getLogger());
       }
       catch (InterruptedException e)
@@ -202,7 +203,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     }
     else
     {
-      listener.getLogger().println("Cannot generate overview report due to missing perfExp.exe.");
+      listener.error("Cannot generate overview report due to missing perfExp.exe.");
     }
   }
 

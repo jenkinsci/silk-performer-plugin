@@ -61,8 +61,14 @@ public class SilkPerformerBuilder extends Builder implements Serializable
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException
   {
     Boolean callRet = false;
-    if (launcher != null && launcher.getChannel() != null && build != null)
+    VirtualChannel channel = launcher.getChannel();
+    if (channel == null)
     {
+      return callRet;
+    }
+
+//    if (launcher != null && launcher.getChannel() != null && build != null)
+//    {
       PrintStream logger = listener.getLogger();
       String projectFilePath = build.getModuleRoot() + "\\" + projectLoc;
 
@@ -82,7 +88,10 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         }
 
         ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
-        callRet = launcher.getChannel().call(executeOnNode);
+		if (launcher != null && launcher.getChannel() != null)
+		{			
+          callRet = launcher.getChannel().call(executeOnNode);
+		}
         if (hasOverviewReport(build.getLogReader()))
         {
           File f = new File(projectFilePath);
@@ -104,7 +113,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         launcher.getChannel().call(node);
         throw e;
       }
-    }
+//    }
     return callRet;
   }
 

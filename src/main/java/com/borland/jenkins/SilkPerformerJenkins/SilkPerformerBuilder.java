@@ -68,7 +68,8 @@ public class SilkPerformerBuilder extends Builder implements Serializable
     {
       projectFilePath = projectLoc;
     }
-
+	  if (launcher != null && launcher.getChannel() != null && build != null)
+	  {
     Boolean callRet = false;
     try
     {
@@ -79,10 +80,8 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         logger.println("SP_HOME not set on node.");
       }
 
-	  if (launcher == null || launcher.getChannel() == null)
-	  {
-        return false;
-	  }
+
+        
 	  
       ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
       callRet = launcher.getChannel().call(executeOnNode);
@@ -104,6 +103,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
       launcher.getChannel().call(node);
       throw e;
     }
+	  }
     return callRet;
   }
 

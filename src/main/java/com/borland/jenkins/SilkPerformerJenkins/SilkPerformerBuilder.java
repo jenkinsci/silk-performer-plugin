@@ -60,50 +60,51 @@ public class SilkPerformerBuilder extends Builder implements Serializable
   @Override
   public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException
   {
-    PrintStream logger = listener.getLogger();
-    String projectFilePath = build.getModuleRoot() + "\\" + projectLoc;
-
-    Path path = Paths.get(projectLoc);
-    if (path.isAbsolute())
-    {
-      projectFilePath = projectLoc;
-    }
-	  if (launcher != null && launcher.getChannel() != null && build != null)
-	  {
     Boolean callRet = false;
-    try
+    if (launcher != null && launcher.getChannel() != null && build != null)
     {
-      EnvVars environment = build.getEnvironment(listener);
-      String performerInstallDir = environment.get("SP_HOME", "");
-      if (performerInstallDir.equals(""))
+      PrintStream logger = listener.getLogger();
+      String projectFilePath = build.getModuleRoot() + "\\" + projectLoc;
+
+      Path path = Paths.get(projectLoc);
+      if (path.isAbsolute())
       {
-        logger.println("SP_HOME not set on node.");
+        projectFilePath = projectLoc;
       }
 
-
-        
-	  
-      ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
-      callRet = launcher.getChannel().call(executeOnNode);
-      if (hasOverviewReport(build.getLogReader()))
+      try
       {
-        File f = new File(projectFilePath);        
-        try {
-          build.addAction(
-              new OverviewReport(getOverviewReportHtmlArtifactPath(f.getAbsoluteFile().getParent() + File.separator + ExecuteOnNode.RESULTS_NAME, build.getProject().getName())));
-        } catch (Exception e) {
-          logger.println("Could not add overview report action.");
+        EnvVars environment = build.getEnvironment(listener);
+        String performerInstallDir = environment.get("SP_HOME", "");
+        if (performerInstallDir.equals(""))
+        {
+          logger.println("SP_HOME not set on node.");
+        }
+
+        ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
+        callRet = launcher.getChannel().call(executeOnNode);
+        if (hasOverviewReport(build.getLogReader()))
+        {
+          File f = new File(projectFilePath);
+          try
+          {
+            build.addAction(
+                new OverviewReport(getOverviewReportHtmlArtifactPath(f.getAbsoluteFile().getParent() + File.separator + ExecuteOnNode.RESULTS_NAME, build.getProject().getName())));
+          }
+          catch (Exception e)
+          {
+            logger.println("Could not add overview report action.");
+          }
         }
       }
+      catch (InterruptedException e)
+      {
+        System.out.println("Job was canceled - starting cleanup.");
+        CleanupNode node = new CleanupNode();
+        launcher.getChannel().call(node);
+        throw e;
+      }
     }
-    catch (InterruptedException e)
-    {
-      System.out.println("Job was canceled - starting cleanup.");
-      CleanupNode node = new CleanupNode();
-      launcher.getChannel().call(node);
-      throw e;
-    }
-	  }
     return callRet;
   }
 

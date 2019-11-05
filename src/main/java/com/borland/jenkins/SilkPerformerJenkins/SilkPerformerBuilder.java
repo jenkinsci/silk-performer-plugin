@@ -79,6 +79,11 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         logger.println("SP_HOME not set on node.");
       }
 
+	  if (launcher == null)
+	  {
+        return false;
+	  }
+	  
       ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
       callRet = launcher.getChannel().call(executeOnNode);
       if (hasOverviewReport(build.getLogReader()))

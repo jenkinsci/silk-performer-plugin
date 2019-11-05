@@ -21,6 +21,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 
@@ -62,13 +63,8 @@ public class SilkPerformerBuilder extends Builder implements Serializable
   {
     Boolean callRet = false;
     VirtualChannel channel = launcher.getChannel();
-    if (channel == null)
+    if (channel != null)
     {
-      return callRet;
-    }
-
-//    if (launcher != null && launcher.getChannel() != null && build != null)
-//    {
       PrintStream logger = listener.getLogger();
       String projectFilePath = build.getModuleRoot() + "\\" + projectLoc;
 
@@ -88,10 +84,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         }
 
         ExecuteOnNode executeOnNode = new ExecuteOnNode(projectFilePath, listener, performerInstallDir, workload, getSuccessCriteria(), build.getProject().getName());
-		if (launcher != null && launcher.getChannel() != null)
-		{			
-          callRet = launcher.getChannel().call(executeOnNode);
-		}
+        callRet = channel.call(executeOnNode);
         if (hasOverviewReport(build.getLogReader()))
         {
           File f = new File(projectFilePath);
@@ -110,10 +103,10 @@ public class SilkPerformerBuilder extends Builder implements Serializable
       {
         System.out.println("Job was canceled - starting cleanup.");
         CleanupNode node = new CleanupNode();
-        launcher.getChannel().call(node);
+        channel.call(node);
         throw e;
       }
-//    }
+    }
     return callRet;
   }
 

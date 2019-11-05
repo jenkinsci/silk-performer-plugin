@@ -79,7 +79,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
         logger.println("SP_HOME not set on node.");
       }
 
-	  if (launcher == null)
+	  if (launcher == null || launcher.getChannel() == null)
 	  {
         return false;
 	  }

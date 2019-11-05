@@ -63,6 +63,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
   {
     Boolean callRet = false;
     VirtualChannel channel = launcher.getChannel();
+	
     if (channel != null)
     {
       PrintStream logger = listener.getLogger();

@@ -54,9 +54,6 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
     this.workload = workload;
     this.successCriteria = successCriteria;
     usePerformanceLevels = (successCriteria == null);
-
-    SystemUtils.initSystem(performerInstallDir, listener);
-
   }
 
   @Override

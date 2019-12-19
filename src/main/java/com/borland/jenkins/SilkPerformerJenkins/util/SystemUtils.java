@@ -24,11 +24,13 @@ public class SystemUtils
   {
     if (!isSystemInitialized)
     {
-      addToJavaLib(performerInstallDir, listener);
-      String nativeLibsPath = getNativeLibrariesPath(performerInstallDir);
+      addToSystemJavaLibPath(performerInstallDir, listener);
+      addToUserJavaLibPath(performerInstallDir, listener);
+      String nativeLibsPath = getNativeLibrariesPath(performerInstallDir, listener);
       if (!performerInstallDir.equalsIgnoreCase(nativeLibsPath))
       {
-        addToJavaLib(nativeLibsPath, listener);
+        addToSystemJavaLibPath(nativeLibsPath, listener);
+        addToUserJavaLibPath(nativeLibsPath, listener);
       }
       loadNativeLibraries(nativeLibsPath, listener);
       loadSgemJar(performerInstallDir, listener);
@@ -63,7 +65,7 @@ public class SystemUtils
     }
   }
 
-  private static void addToJavaLib(String performerInstallDir, BuildListener listener)
+  private static void addToSystemJavaLibPath(String performerInstallDir, BuildListener listener)
   {
     try
     {
@@ -85,21 +87,56 @@ public class SystemUtils
     }
   }
 
-  private static void loadNativeLibraries(String performerInstallDir, BuildListener listener)
+  private static void addToUserJavaLibPath(String nativeLibPath, BuildListener listener)
   {
     try
     {
-      System.load(performerInstallDir + "\\locStringsCommon.dll");
-      System.load(performerInstallDir + "\\locStringsKernelCommon.dll");
-      System.load(performerInstallDir + "\\locStringsKernelFeatures.dll");
-      System.load(performerInstallDir + "\\perfVersion.dll");
-      System.load(performerInstallDir + "\\perfBexScanner.dll");
-      System.load(performerInstallDir + "\\perfXmlReports.dll");
-      System.load(performerInstallDir + "\\perfTsd.dll");
-      System.load(performerInstallDir + "\\perfBdlScanner.dll");
-      System.load(performerInstallDir + "\\sgExecManager.dll");
-      System.load(performerInstallDir + "\\perfMessages.dll");
-      System.load(performerInstallDir + "\\perfLm.dll");
+      // This enables the java.library.path to be modified at runtime
+      // From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
+      //
+      Field field = ClassLoader.class.getDeclaredField("usr_paths");
+      field.setAccessible(true);
+      String[] paths = (String[]) field.get(null);
+      for (int i = 0; i < paths.length; i++)
+      {
+        if (nativeLibPath.equals(paths[i]))
+        {
+          return;
+        }
+      }
+      String[] tmp = new String[paths.length + 1];
+      System.arraycopy(paths, 0, tmp, 0, paths.length);
+      tmp[paths.length] = nativeLibPath;
+      field.set(null, tmp);
+      System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + nativeLibPath);
+    }
+    catch (IllegalAccessException e)
+    {
+      listener.error("Cannot extend java library path.");
+      e.printStackTrace(listener.getLogger());
+    }
+    catch (NoSuchFieldException e)
+    {
+      listener.error("Cannot extend java library path.");
+      e.printStackTrace(listener.getLogger());
+    }
+  }
+
+  private static void loadNativeLibraries(String nativeLibsPath, BuildListener listener)
+  {
+    try
+    {
+      System.load(nativeLibsPath + "\\locStringsCommon.dll");
+      System.load(nativeLibsPath + "\\locStringsKernelCommon.dll");
+      System.load(nativeLibsPath + "\\locStringsKernelFeatures.dll");
+      System.load(nativeLibsPath + "\\perfVersion.dll");
+      System.load(nativeLibsPath + "\\perfBexScanner.dll");
+      System.load(nativeLibsPath + "\\perfXmlReports.dll");
+      System.load(nativeLibsPath + "\\perfTsd.dll");
+      System.load(nativeLibsPath + "\\perfBdlScanner.dll");
+      System.load(nativeLibsPath + "\\sgExecManager.dll");
+      System.load(nativeLibsPath + "\\perfMessages.dll");
+      System.load(nativeLibsPath + "\\perfLm.dll");
       // We need to load these libraries to be able to load sgemBridge.dll
     }
     catch (Exception e)
@@ -109,24 +146,28 @@ public class SystemUtils
     }
   }
 
-  private static String getNativeLibrariesPath(String performerInstallDir)
+  private static String getNativeLibrariesPath(String performerInstallDir, BuildListener listener)
   {
-    if (System.getProperty("sun.arch.data.model").equals("64"))
+    String spInstallDir = performerInstallDir.toLowerCase();
+
+    String archDataModel = System.getProperty("sun.arch.data.model");
+    if (archDataModel.equals("64"))
     {
-      Path p = Paths.get(performerInstallDir, "X64");
+      Path p = Paths.get(spInstallDir, "X64");
       if (p.toFile().exists())
       {
         return p.toString();
       }
 
-      String programFiles86 = System.getenv("ProgramFiles(X86)");
-      if (performerInstallDir.contains(programFiles86))
+      String programFiles86 = System.getenv("ProgramFiles(X86)").toLowerCase();
+      if (spInstallDir.contains(programFiles86))
       {
-        String programFiles = System.getenv("ProgramFiles");
-        String s = performerInstallDir.replace(programFiles86, programFiles);
-        if (new File(s).exists())
+        String programFiles = System.getenv("ProgramFiles").toLowerCase();
+        String s = spInstallDir.replace(programFiles86, programFiles);
+        p = Paths.get(s);
+        if (p.toFile().exists())
         {
-          return s;
+          return p.toString();
         }
       }
     }

@@ -26,14 +26,14 @@ public class SystemUtils
     {
       addToSystemJavaLibPath(performerInstallDir, listener);
       addToUserJavaLibPath(performerInstallDir, listener);
-      String nativeLibsPath = getNativeLibrariesPath(performerInstallDir, listener);
+      String nativeLibsPath = getNativeLibrariesPath(performerInstallDir);
       if (!performerInstallDir.equalsIgnoreCase(nativeLibsPath))
       {
         addToSystemJavaLibPath(nativeLibsPath, listener);
         addToUserJavaLibPath(nativeLibsPath, listener);
       }
       loadNativeLibraries(nativeLibsPath, listener);
-      loadSgemJar(performerInstallDir, listener);
+      // loadSgemJar(performerInstallDir, listener);
 
       isSystemInitialized = true;
     }
@@ -110,12 +110,7 @@ public class SystemUtils
       field.set(null, tmp);
       System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + nativeLibPath);
     }
-    catch (IllegalAccessException e)
-    {
-      listener.error("Cannot extend java library path.");
-      e.printStackTrace(listener.getLogger());
-    }
-    catch (NoSuchFieldException e)
+    catch (IllegalAccessException | NoSuchFieldException e)
     {
       listener.error("Cannot extend java library path.");
       e.printStackTrace(listener.getLogger());
@@ -146,10 +141,9 @@ public class SystemUtils
     }
   }
 
-  private static String getNativeLibrariesPath(String performerInstallDir, BuildListener listener)
+  private static String getNativeLibrariesPath(String performerInstallDir)
   {
     String spInstallDir = performerInstallDir.toLowerCase();
-
     String archDataModel = System.getProperty("sun.arch.data.model");
     if (archDataModel.equals("64"))
     {

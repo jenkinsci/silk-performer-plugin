@@ -52,8 +52,13 @@ public class XMLReader implements Serializable
     return (double) tmp / factor;
   }
 
-  private boolean expressionReader(Double val1, String op, String val2)
+  private boolean expressionReader(Double val1, String op, String val2, BuildListener listener)
   {
+    if (val1 == null || op == null || val2 == null)
+    {
+      listener.getLogger().println("\tSome of the values are null! (val1 = " + val1 + "  : op = \"" + op + "\"  : val2 = " + val2 + ")");
+      return false;
+    }
     if (op.equals("<"))
     {
       return (val1 < Double.valueOf(val2));
@@ -131,7 +136,7 @@ public class XMLReader implements Serializable
         bMeasureFound = true;
         if (sc.getValueType().equals("Minimum Value"))
         {
-          if (!expressionReader(m.getMin(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getMin(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getMin()));
             bSuccessCriteriaFailed = true;
@@ -140,7 +145,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("Maximum Value"))
         {
-          if (!expressionReader(m.getMax(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getMax(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getMax()));
             bSuccessCriteriaFailed = true;
@@ -149,7 +154,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("Count All"))
         {
-          if (!expressionReader(Double.valueOf(m.getCount()), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(Double.valueOf(m.getCount()), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, Double.valueOf(m.getCount())));
             bSuccessCriteriaFailed = true;
@@ -158,7 +163,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("Average Value") || sc.getValueType().equals("eAverage"))
         {
-          if (!expressionReader(m.getAvg(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getAvg(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getAvg()));
             bSuccessCriteriaFailed = true;
@@ -167,7 +172,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("ePercentile50"))
         {
-          if (!expressionReader(m.getPercentile50(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getPercentile50(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getPercentile50()));
             bSuccessCriteriaFailed = true;
@@ -176,7 +181,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("ePercentile90"))
         {
-          if (!expressionReader(m.getPercentile90(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getPercentile90(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getPercentile90()));
             bSuccessCriteriaFailed = true;
@@ -185,7 +190,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("ePercentile95"))
         {
-          if (!expressionReader(m.getPercentile95(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getPercentile95(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getPercentile95()));
             bSuccessCriteriaFailed = true;
@@ -194,7 +199,7 @@ public class XMLReader implements Serializable
         }
         else if (sc.getValueType().equals("ePercentile99"))
         {
-          if (!expressionReader(m.getPercentile99(), sc.getOperatorType(), sc.getChosenValue()))
+          if (!expressionReader(m.getPercentile99(), sc.getOperatorType(), sc.getChosenValue(), listener))
           {
             listener.getLogger().println(formatSuccessCriteria(ut, sc, m.getPercentile99()));
             bSuccessCriteriaFailed = true;

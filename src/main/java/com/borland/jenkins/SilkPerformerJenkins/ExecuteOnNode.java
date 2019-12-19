@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 
 import com.borland.jenkins.SilkPerformerJenkins.data.SPAgent;
 import com.borland.jenkins.SilkPerformerJenkins.data.SPUserType;
+import com.borland.jenkins.SilkPerformerJenkins.util.CustomClassLoader;
 import com.borland.jenkins.SilkPerformerJenkins.util.OverviewReport;
 import com.borland.jenkins.SilkPerformerJenkins.util.SilkPerformerTestManager;
 import com.borland.jenkins.SilkPerformerJenkins.util.SystemUtils;
@@ -59,6 +60,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
   @Override
   public Boolean call() throws IOException
   {
+    CustomClassLoader.init(performerInstallDir, getClass().getClassLoader());
     SystemUtils.initSystem(performerInstallDir, listener);
     SilkPerformerTestManager sptm;
     XMLReader spxml;

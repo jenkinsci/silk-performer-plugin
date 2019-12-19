@@ -63,7 +63,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
   {
     Boolean callRet = false;
     VirtualChannel channel = launcher.getChannel();
-	
+
     if (channel != null)
     {
       PrintStream logger = listener.getLogger();
@@ -102,7 +102,7 @@ public class SilkPerformerBuilder extends Builder implements Serializable
       }
       catch (InterruptedException e)
       {
-        System.out.println("Job was canceled - starting cleanup.");
+        logger.println("Job was canceled - starting cleanup.");
         CleanupNode node = new CleanupNode();
         channel.call(node);
         throw e;
@@ -146,6 +146,12 @@ public class SilkPerformerBuilder extends Builder implements Serializable
     sb.append(File.separator).append(pPath.subpath(index + 1, pPath.getNameCount()).toString());
     sb.append(File.separator).append(OverviewReport.OVR_NAME);
     return sb.toString().replaceAll("\\\\", "/");
+  }
+
+  @Override
+  public DescriptorImplementation getDescriptor()
+  {
+    return DESCRIPTOR;
   }
 
   @Extension

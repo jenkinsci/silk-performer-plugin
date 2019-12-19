@@ -21,9 +21,9 @@ public class SilkPerformerListBuilder implements Serializable
 {
   private static final long serialVersionUID = -773441083101579225L;
 
-  private static final Map<String, List<String>> measures = new TreeMap<>();;
+  private static final Map<String, List<String>> measures = new TreeMap<>();
   private static final Map<String, Integer> mapMeasureCategory = new HashMap<>();
-  private static final Map<String, Integer> mapMeasureType = new HashMap<>();;
+  private static final Map<String, Integer> mapMeasureType = new HashMap<>();
 
   public static final String SEPARATOR = "||||";
   static
@@ -52,7 +52,7 @@ public class SilkPerformerListBuilder implements Serializable
     return (i == null) ? -1 : i;
   }
 
-  //key is concat of measureType + separator + measureCategory
+  // key is concat of measureType + separator + measureCategory
   public static int getMeasureTypeId(String key)
   {
     Integer i = mapMeasureType.get(key);
@@ -104,7 +104,8 @@ public class SilkPerformerListBuilder implements Serializable
   }
 
   // To generate the xml file use ...
-  private static void fillMap_fromFile()
+  @SuppressWarnings("unused")
+  private static void fillMapFromFile()
   {
     Document doc;
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -138,7 +139,7 @@ public class SilkPerformerListBuilder implements Serializable
       {
         Element typeNode = (Element) typeNodeList.item(j);
         list.add(typeNode.getAttribute("name"));
-        mapMeasureType.put(typeNode.getAttribute("name")  + SEPARATOR + classPointNode.getAttribute("name"), Integer.valueOf(typeNode.getAttribute("id")));
+        mapMeasureType.put(typeNode.getAttribute("name") + SEPARATOR + classPointNode.getAttribute("name"), Integer.valueOf(typeNode.getAttribute("id")));
       }
     }
   }

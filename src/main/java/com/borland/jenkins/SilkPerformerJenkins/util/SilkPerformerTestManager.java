@@ -3,13 +3,12 @@ package com.borland.jenkins.SilkPerformerJenkins.util;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-import com.segue.em.Ltc;
-import com.segue.em.Projectfile;
-import com.segue.em.SGExecutionManager;
-import com.segue.em.projectfile.ProfileBooleanProperty;
-import com.segue.em.projectfile.TransactionInfo;
-import com.segue.em.projectfile.UserType;
-import com.segue.em.remote.ISGExecutionManager;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.ISGExecutionManagerWrapper;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.LtcWrapper;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.ProjectfileWrapper;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.SGExecutionManagerWrapper;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.TransactionInfoWrapper;
+import com.borland.jenkins.SilkPerformerJenkins.wrapper.UserTypeWrapper;
 
 public class SilkPerformerTestManager
 {
@@ -29,63 +28,63 @@ public class SilkPerformerTestManager
 
   public String getActiveWorkload() throws Exception
   {
-    Projectfile prjf = SGExecutionManager.openProject(projectLoc);
-    String activeWorkload = prjf.getActiveWorkload();
-    prjf.close();
+    Object prjf = SGExecutionManagerWrapper.openProject(projectLoc);
+    String activeWorkload = ProjectfileWrapper.getActiveWorkload(prjf);
+    ProjectfileWrapper.close(prjf);
     return activeWorkload;
   }
 
   public void startTheLoadTest(PrintStream logger) throws Exception
   {
     String configLoc = installationDir + "/sgExecManagerLtc.xml";
-    Projectfile prjf = SGExecutionManager.openProject(projectLoc);
-    prjf.setProfileBooleanProperty(new ProfileBooleanProperty(prjf, "PROFSetting_RESULTS_Option_ReportFiles", true));
-    prjf.setResultsDir(resultDir);
+    Object prjf = SGExecutionManagerWrapper.openProject(projectLoc);
+    ProjectfileWrapper.setProfileBooleanProperty(prjf, "PROFSetting_RESULTS_Option_ReportFiles", true);
+    ProjectfileWrapper.setResultsDir(prjf, resultDir);
     if (workload.length() > 0)
     {
-      prjf.setActiveWorkload(workload);
+      ProjectfileWrapper.setActiveWorkload(prjf, workload);
     }
-    prjf.save();
-    prjf.close();
+    ProjectfileWrapper.save(prjf);
+    ProjectfileWrapper.close(prjf);
 
-    SGExecutionManager.setMessagingMode(ISGExecutionManager.FLAG_LTC_MESSAGING_LOCALPUMP);
-    Ltc ltc = SGExecutionManager.createController(configLoc);
+    SGExecutionManagerWrapper.setMessagingMode(ISGExecutionManagerWrapper.getAttribute("FLAG_LTC_MESSAGING_LOCALPUMP"));
+    Object ltc = SGExecutionManagerWrapper.createController(configLoc);
 
-    ltc.addEventListener(new JenkinsSPListener(logger));
-    ltc.setDeployBuildOption(ISGExecutionManager.BUILD_METHOD_REBUILD);
-    ltc.deployProject(projectLoc);
-    ltc.setVuOutputOptions(SGExecutionManager.OPT_DISPLAY_ALL_MSG);
-    ltc.start(-1);
-    ltc.undeploy();
-    ltc.destroy();
-    SGExecutionManager.destroyController(ltc);
+    LtcWrapper.addEventListener(ltc, JenkinsSPListener.getListener(logger));
+    LtcWrapper.setDeployBuildOption(ltc, ISGExecutionManagerWrapper.getAttribute("BUILD_METHOD_REBUILD"));
+    LtcWrapper.deployProject(ltc, projectLoc);
+    LtcWrapper.setVuOutputOptions(ltc, SGExecutionManagerWrapper.getAttribute("OPT_DISPLAY_ALL_MSG"));
+    LtcWrapper.start(ltc, -1);
+    LtcWrapper.undeploy(ltc);
+    LtcWrapper.destroy(ltc);
+    SGExecutionManagerWrapper.destroyController(ltc);
   }
 
   public String getInformation() throws Exception
   {
     StringBuilder result = new StringBuilder();
-    Projectfile prjf = SGExecutionManager.openProject(projectLoc);
-    String namewl = prjf.getActiveWorkload();
-    prjf.setCurrentWorkload(namewl);
-    UserType itut = prjf.getFirstUserType();
+    Object prjf = SGExecutionManagerWrapper.openProject(projectLoc);
+    String namewl = ProjectfileWrapper.getActiveWorkload(prjf);
+    ProjectfileWrapper.setCurrentWorkload(prjf, namewl);
+    Object itut = ProjectfileWrapper.getFirstUserType(prjf);
     while (itut != null)
     {
-      result.append(itut.getScriptName());
+      result.append(UserTypeWrapper.getScriptName(itut));
       result.append("/");
-      result.append(itut.getUsergroupName());
+      result.append(UserTypeWrapper.getUsergroupName(itut));
       result.append("/");
-      result.append(itut.getProfileName());
+      result.append(UserTypeWrapper.getProfileName(itut));
       result.append("\n");
-      itut = prjf.getNextUserType();
+      itut = ProjectfileWrapper.getNextUserType(prjf);
     }
-    Iterator<TransactionInfo> itti = prjf.getTransactionInfo();
+    Iterator<Object> itti = ProjectfileWrapper.getTransactionInfo(prjf);
     while (itti.hasNext())
     {
-      TransactionInfo ti = itti.next();
-      result.append(ti.getTransactionName());
+      Object ti = itti.next();
+      result.append(TransactionInfoWrapper.getTransactionName(ti));
       result.append("\n");
     }
-    prjf.close();
+    ProjectfileWrapper.close(prjf);
     return result.toString();
   }
 }

@@ -20,13 +20,8 @@ import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.VuSyncMessageWra
 
 public class JenkinsSPListener
 {
-  private PrintStream logger;
-  private static Object listener;
-
-  public JenkinsSPListener(PrintStream logger)
+  private JenkinsSPListener()
   {
-
-    this.logger = logger;
   }
 
   public static Object getListener(PrintStream logger) throws ClassNotFoundException

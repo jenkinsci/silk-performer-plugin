@@ -37,6 +37,7 @@ public class JenkinsSPListener
   public static Object initListener(PrintStream logger) throws ClassNotFoundException
   {
     Class<?>[] interfaces = new Class[] { ListenerWrapper.getListenerClass() };
+	logger.println("JenkinsSPListener - initListener - CustomClassLoader.getCustomClassLoader() : " + CustomClassLoader.getCustomClassLoader());
     return Proxy.newProxyInstance(CustomClassLoader.getCustomClassLoader(), interfaces, new InvocationHandler()
     {
 

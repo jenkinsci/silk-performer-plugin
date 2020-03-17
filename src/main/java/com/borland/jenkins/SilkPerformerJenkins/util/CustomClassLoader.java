@@ -3,8 +3,9 @@ package com.borland.jenkins.SilkPerformerJenkins.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 public class CustomClassLoader
 {
@@ -14,13 +15,29 @@ public class CustomClassLoader
   {
   }
 
-  public static void init(String performerInstallDir, ClassLoader parent) throws MalformedURLException
+  public static void init(String performerInstallDir, ClassLoader parent)
   {
     if (classLoader == null)
     {
-      Path p = Paths.get(performerInstallDir, "ClassFiles\\sgem.jar");
-      URL[] urls = new URL[] { p.toUri().toURL() };
-      classLoader = new URLClassLoader(urls, parent);
+      AccessController.doPrivileged(new PrivilegedAction<Void>()
+      {
+
+        @Override
+        public Void run()
+        {
+          try
+          {
+            URL[] urls;
+            urls = new URL[] { Paths.get(performerInstallDir, "ClassFiles\\sgem.jar").toUri().toURL() };
+            classLoader = new URLClassLoader(urls, parent);
+          }
+          catch (MalformedURLException e)
+          {
+            e.printStackTrace();
+          }
+          return null;
+        }
+      });
     }
   }
 

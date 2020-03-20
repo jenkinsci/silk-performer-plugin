@@ -39,16 +39,15 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
   public static final String RESULTS_NAME = "result" + File.separator;
 
   private String performerInstallDir;
-  BuildListener listener;
-  String projectFilePath;
-  String projectPath;
+  private BuildListener listener;
+  private String projectFilePath;
+  private String projectPath;
   private List<SuccessCriteria> successCriteria;
-  String workload;
+  private String workload;
   boolean usePerformanceLevels;
 
   public ExecuteOnNode(String projectFilePath, BuildListener listener, String performerInstallDir, String workload, List<SuccessCriteria> successCriteria, String projectName)
   {
-
     this.listener = listener;
     this.performerInstallDir = performerInstallDir;
     this.projectFilePath = projectFilePath;
@@ -60,7 +59,14 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
   @Override
   public Boolean call() throws IOException
   {
-    CustomClassLoader.init(performerInstallDir, getClass().getClassLoader());
+    ClassLoader clsLoader = getClass().getClassLoader();
+    listener.getLogger().println("Class loader : " + clsLoader);
+    if (clsLoader.getParent() != null)
+    {
+      clsLoader = clsLoader.getParent();
+      listener.getLogger().println("Class loader : " + clsLoader);
+    }
+    CustomClassLoader.init(performerInstallDir, clsLoader);
     SystemUtils.initSystem(performerInstallDir, listener);
     SilkPerformerTestManager sptm;
     XMLReader spxml;

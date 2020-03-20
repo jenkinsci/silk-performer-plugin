@@ -8,7 +8,6 @@ import java.lang.reflect.Proxy;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.ListenerWrapper;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.AgentMessageWrapper;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.ErrorMessageWrapper;
-import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.IpcMessageWrapper;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.LtcClientMessageWrapper;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.LtcInfoMessageWrapper;
 import com.borland.jenkins.SilkPerformerJenkins.wrapper.message.LtcOutputMessageWrapper;
@@ -25,23 +24,14 @@ public class JenkinsSPListener
   {
   }
 
-  public static Object getListener(PrintStream logger) throws ClassNotFoundException
+  public static Object getListener(PrintStream logger) throws IllegalArgumentException
   {
-    // if (listener == null)
-    // {
-    // listener = initListener(logger);
-    // }
-    // return listener;
     return initListener(logger);
   }
 
-  public static Object initListener(PrintStream logger) throws ClassNotFoundException
+  public static Object initListener(PrintStream logger) throws IllegalArgumentException
   {
-    logger.println("------------initListener----------------");
-    Class<?> ipcMessageCls = IpcMessageWrapper.getIpcMessageClass();
-    logger.println("------------initListener---------------- IpcMessage class : " + ipcMessageCls);
     Class<?>[] interfaces = new Class[] { ListenerWrapper.getListenerClass() };
-    logger.println("JenkinsSPListener - initListener - CustomClassLoader.getCustomClassLoader() : " + CustomClassLoader.getCustomClassLoader());
     return Proxy.newProxyInstance(CustomClassLoader.getCustomClassLoader(), interfaces, new InvocationHandler()
     {
 

@@ -9,7 +9,6 @@ public class IpcMessageWrapper
   {
     try
     {
-      System.out.println("----------------- IpcMessageWrapper static init -------------------");
       clsIpcMessage = CustomClassLoader.getClazz("com.segue.em.ltc.IpcMessage");
     }
     catch (ClassNotFoundException e)

@@ -60,11 +60,9 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
   public Boolean call() throws IOException
   {
     ClassLoader clsLoader = getClass().getClassLoader();
-    listener.getLogger().println("Class loader : " + clsLoader);
     if (clsLoader.getParent() != null)
     {
       clsLoader = clsLoader.getParent();
-      listener.getLogger().println("Class loader : " + clsLoader);
     }
     CustomClassLoader.init(performerInstallDir, clsLoader);
     SystemUtils.initSystem(performerInstallDir, listener);
@@ -82,7 +80,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
       listener.getLogger().println("Results path: " + resultPath);
       listener.getLogger().println("Silk Performer installation directory: " + performerInstallDir);
 
-      sptm = new SilkPerformerTestManager(projectFilePath, resultPath, performerInstallDir, workload);
+      sptm = new SilkPerformerTestManager(projectFilePath, resultPath, performerInstallDir, workload, listener.getLogger());
       if (workload.length() > 0)
       {
         listener.getLogger().println("Running workload: " + workload);
@@ -94,7 +92,7 @@ public class ExecuteOnNode extends MasterToSlaveCallable<Boolean, IOException> i
       }
       listener.getLogger().println("");
       listener.getLogger().println("Agent messages:");
-      sptm.startTheLoadTest(listener.getLogger());
+      sptm.startTheLoadTest();
       listener.getLogger().println("");
       listener.getLogger().println("Completed load test.");
       listener.getLogger().println("");

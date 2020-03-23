@@ -78,4 +78,9 @@ public class SGExecutionManagerWrapper
     Method m = clsSgExecManager.getMethod("getMeasureTypeName");
     return (String) m.invoke(null, eMeasureType);
   }
+
+  public static Class<?> getSgExecutionManagerClass()
+  {
+    return clsSgExecManager;
+  }
 }

@@ -24,17 +24,20 @@ public class SystemUtils
   {
     if (!isSystemInitialized)
     {
-      addToSystemJavaLibPath(performerInstallDir, listener);
-      addToUserJavaLibPath(performerInstallDir, listener);
       String nativeLibsPath = getNativeLibrariesPath(performerInstallDir);
       if (!performerInstallDir.equalsIgnoreCase(nativeLibsPath))
       {
-        addToSystemJavaLibPath(nativeLibsPath, listener);
-        addToUserJavaLibPath(nativeLibsPath, listener);
+        addToJavaLibPath(nativeLibsPath, "sys_paths", listener);
+        addToJavaLibPath(nativeLibsPath, "usr_paths", listener);
       }
+      addToJavaLibPath(performerInstallDir, "sys_paths", listener);
+      addToJavaLibPath(performerInstallDir, "usr_paths", listener);
       loadNativeLibraries(nativeLibsPath, listener);
-      // loadSgemJar(performerInstallDir, listener);
-
+      if (getVersion() <= 8)
+      {
+        loadSgemJar(performerInstallDir, listener);
+      }
+      listener.getLogger().println("System is initialized!");
       isSystemInitialized = true;
     }
   }
@@ -49,7 +52,7 @@ public class SystemUtils
         File ff = new File(performerInstallDir + "\\ClassFiles\\sgem.jar");
         Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
         method.setAccessible(true);
-        method.invoke(ClassLoader.getSystemClassLoader(), ff.toURI().toURL());
+        method.invoke(clsLoader, ff.toURI().toURL());
 
         listener.getLogger().println(ff.getAbsolutePath() + " is loaded!");
       }
@@ -65,36 +68,15 @@ public class SystemUtils
     }
   }
 
-  private static void addToSystemJavaLibPath(String performerInstallDir, BuildListener listener)
+  private static void addToJavaLibPath(String nativeLibPath, String fieldPaths, BuildListener listener)
   {
     try
     {
-      String s = System.getProperty("java.library.path");
-      if (!s.contains(performerInstallDir))
-      {
-        listener.getLogger().println(performerInstallDir + " is added to java.library.path");
-        s = performerInstallDir + ";" + s;
-        System.setProperty("java.library.path", s);
-        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-        fieldSysPath.setAccessible(true);
-        fieldSysPath.set(null, null);
-      }
-    }
-    catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
-    {
-      listener.error("Cannot extend java library path.");
-      e.printStackTrace(listener.getLogger());
-    }
-  }
-
-  private static void addToUserJavaLibPath(String nativeLibPath, BuildListener listener)
-  {
-    try
-    {
+      // fieldPaths should be sys_paths or usr_paths
       // This enables the java.library.path to be modified at runtime
       // From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
       //
-      Field field = ClassLoader.class.getDeclaredField("usr_paths");
+      Field field = ClassLoader.class.getDeclaredField(fieldPaths);
       field.setAccessible(true);
       String[] paths = (String[]) field.get(null);
       for (int i = 0; i < paths.length; i++)
@@ -166,5 +148,23 @@ public class SystemUtils
       }
     }
     return performerInstallDir;
+  }
+
+  private static int getVersion()
+  {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1."))
+    {
+      version = version.substring(2, 3);
+    }
+    else
+    {
+      int dot = version.indexOf('.');
+      if (dot != -1)
+      {
+        version = version.substring(0, dot);
+      }
+    }
+    return Integer.parseInt(version);
   }
 }

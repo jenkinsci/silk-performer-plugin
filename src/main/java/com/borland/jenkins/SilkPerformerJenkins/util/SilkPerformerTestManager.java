@@ -17,13 +17,15 @@ public class SilkPerformerTestManager
   private final String resultDir;
   private final String installationDir;
   private final String workload;
+  private final PrintStream logger;
 
-  public SilkPerformerTestManager(String projectLoc, String resultDir, String installationDir, String workload) throws Exception
+  public SilkPerformerTestManager(String projectLoc, String resultDir, String installationDir, String workload, PrintStream logger) throws Exception
   {
     this.projectLoc = projectLoc;
     this.resultDir = resultDir;
     this.installationDir = installationDir;
     this.workload = workload;
+    this.logger = logger;
   }
 
   public String getActiveWorkload() throws Exception
@@ -34,7 +36,7 @@ public class SilkPerformerTestManager
     return activeWorkload;
   }
 
-  public void startTheLoadTest(PrintStream logger) throws Exception
+  public void startTheLoadTest() throws Exception
   {
     String configLoc = installationDir + "/sgExecManagerLtc.xml";
     Object prjf = SGExecutionManagerWrapper.openProject(projectLoc);

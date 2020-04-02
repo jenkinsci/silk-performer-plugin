@@ -54,7 +54,8 @@ public class SilkPerformerTestManager
 
     LtcWrapper.addEventListener(ltc, JenkinsSPListener.getListener(logger));
     LtcWrapper.setDeployBuildOption(ltc, ISGExecutionManagerWrapper.getAttribute("BUILD_METHOD_REBUILD"));
-    LtcWrapper.deployProject(ltc, projectLoc);
+    // LtcWrapper.deployProject(ltc, projectLoc);
+    LtcWrapper.deployProjectEx(ltc, projectLoc, SGExecutionManagerWrapper.getAttribute("FLAG_LTC_GENERATE_XMLREPORT_SUMMARY"));
     LtcWrapper.setVuOutputOptions(ltc, SGExecutionManagerWrapper.getAttribute("OPT_DISPLAY_ALL_MSG"));
     LtcWrapper.start(ltc, -1);
     LtcWrapper.undeploy(ltc);

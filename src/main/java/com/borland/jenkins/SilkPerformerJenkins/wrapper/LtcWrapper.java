@@ -42,6 +42,12 @@ public class LtcWrapper
     m.invoke(ltc, prjFileName);
   }
 
+  public static void deployProjectEx(Object ltc, String prjFileName, int iFlags) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+  {
+    Method m = ltc.getClass().getMethod("deployProjectEx", String.class, int.class);
+    m.invoke(ltc, prjFileName, iFlags);
+  }
+
   public static void setVuOutputOptions(Object ltc, int uOptions) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
   {
     Method m = ltc.getClass().getMethod("setVuOutputOptions", int.class);
